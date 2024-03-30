@@ -16,7 +16,11 @@ export class AuthService {
         email: dto.email,
         hash,
       },
-
+      select: {
+        id: true,
+        email: true,
+        createdAt: true,
+      },
     });
     // Return the user
     return user;
