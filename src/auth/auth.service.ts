@@ -43,9 +43,33 @@ export class AuthService {
     }
   }
 
-  signin() {
-    return {
-      message: 'Hello World! I am signing in...',
-    };
+  async signin(dto: AuthDto) {
+    // Find the user by email
+    const user =
+      await this.prisma.user.findUnique({
+        where: {
+          email: dto.email,
+        },
+      });
+    // if the user is not found, throw an error
+    if (!user) {
+      throw new ForbiddenException(
+        'Credentials incorrect.',
+      );
+    }
+    // Compare the password with the hash
+    const isPasswordValid = await argon.verify(
+      user.hash,
+      dto.password,
+    );
+    // if the password is incorrect, throw an exception
+    if (!isPasswordValid) {
+      throw new ForbiddenException(
+        'Credentials incorrect.',
+      );
+    }
+    // send back the user
+    delete user.hash;
+    return user;
   }
 }
