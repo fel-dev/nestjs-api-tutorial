@@ -6,6 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prisma:dev:deploy": "npx prisma migrate deploy",
+    "db:dev:rm": "docker compose rm dev-db -s -f -v",
+    "db:dev:up": "docker compose up dev-db -d",
+    "db:dev:restart:unix": "npm run db:dev:rm && npm run db:dev:up && sleep 10 && npm run prisma:dev:deploy",
+    "db:dev:restart:win": "npm run db:dev:rm && npm run db:dev:up && timeout /T 10 /NOBREAK && npm run prisma:dev:deploy",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
